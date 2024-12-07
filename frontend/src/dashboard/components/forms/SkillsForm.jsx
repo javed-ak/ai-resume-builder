@@ -9,16 +9,53 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function SkillsForm({enableNext}) {
-    
+    const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
+    const [ loading, setLoading ] = useState(false);
+    const [summery, setSummery] = useState();
+    const params = useParams();
+
+    useEffect(() => {
+        summery && setResumeInfo({
+            ...resumeInfo,
+            summery:summery
+        })
+    }, [summery])
+
+    const handleInputChange = (e) => {
+        enableNext(false)
+        setSummery(e.target.value)
+        summery && setResumeInfo({
+            ...resumeInfo,
+            summery: summery
+        })
+    }
+
+    const onSave = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const data = {
+            data: {
+                summery: summery
+            }
+        }
+        ResumeApi.UpdateResume(params?.resumeId, data).then(resp => {
+            enableNext(true);
+            setLoading(false);
+            toast("Details Updated");
+        }, (error) => {
+            setLoading(false);
+        })
+    }
+
   return (
     <div className="px-5 py-10 border-t-8 border-b-8 rounded-lg shadow border-zinc-900">
       <div>
         <div className="font-bold text-2xl">Skills</div>
-        <div className="font-light text-gray-500">Add skills for you job</div>
+        <div className="font-light text-gray-500">Add summery for you job title</div>
       </div>
       <form onSubmit={onSave} className="my-5">
         <div className="flex justify-between items-end">
-            <label>Skills</label>
+            <label>Add Summery</label>
             <Button className='border-red-600 text-red-600' variant='outline' size='sm'>Generate with AI</Button>
         </div>
         <div>

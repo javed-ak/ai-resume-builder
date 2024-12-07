@@ -53,7 +53,7 @@ export default function PersonalInfoForm({enableNext}) {
             <div className="grid grid-cols-2 gap-5">
                 <div className="flex flex-col gap-2">
                     <label className="text-sm">First Name</label>
-                    <Input name='firstName' defaultValue={resumeInfo?.firstName} required onChange={handleInputChange}/>
+                    <Input name='firstName' defaultValue={resumeInfo?.firstName} required onChange={(handleInputChange)}/>
                 </div>
                 <div className="flex flex-col gap-2">
                     <label className="text-sm">Last Name</label>

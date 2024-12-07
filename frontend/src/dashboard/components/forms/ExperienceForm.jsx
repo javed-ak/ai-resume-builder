@@ -1,32 +1,160 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ResumeInfoContext } from "@/context/ResumeInfoContext";
-import { useContext, useEffect, useState } from "react";
-import ResumeApi from "./../../../../routes/ResumeApi";
-import { useParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import React, { useContext, useEffect, useState } from 'react';
+import RichTextEditor from '../RichTextEditor';
+import { ResumeInfoContext } from '@/context/ResumeInfoContext';
+import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { LoaderCircle } from 'lucide-react';
+import ResumeApi from './../../../../routes/ResumeApi';
 
-export default function ExperienceForm({enableNext}) {
-    
+const formField = {
+    title:'',
+    companyName:'',
+    city:'',
+    state:'',
+    startDate:'',
+    endDate:'',
+    workSummery:''
+};
+
+export default function ExperienceForm() {
+    const [experinceList, setExperinceList] = useState([]);
+    const {resumeInfo, setResumeInfo} = useContext(ResumeInfoContext);
+    const params = useParams();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        resumeInfo?.Experience.length > 0 && setExperinceList(resumeInfo?.Experience);   
+    }, [])
+
+    const handleChange = (index, event) => {
+        const newEntries = experinceList.slice();
+        const {name, value} = event.target;
+        newEntries[index][name] = value;
+        console.log(newEntries);
+        setExperinceList(newEntries);
+    }
+
+    const AddNewExperience = () => {
+        setExperinceList([...experinceList,{
+            title:'',
+            companyName:'',
+            city:'',
+            state:'',
+            startDate:'',
+            endDate:'',
+            workSummery:''
+        }])
+    }
+
+    const RemoveExperience = () => {
+        setExperinceList(experinceList=>experinceList.slice(0,-1));
+    }
+
+    const handleRichTextEditor = (e, name, index) => {
+        const newEntries = experinceList.slice();
+        newEntries[index][name] = e.target.value;
+       
+        setExperinceList(newEntries);
+    }
+
+    useEffect(() => {
+        setResumeInfo({
+            ...resumeInfo,
+            Experience:experinceList
+        }); 
+    },[experinceList]);
+
+    const onSave= () => {
+        setLoading(true)
+        const data={
+            data:{
+                Experience:experinceList.map(({ id, ...rest }) => rest)
+            }
+        }
+
+         console.log(experinceList)
+
+        ResumeApi.UpdateResume(params?.resumeId,data).then(res=>{
+            console.log(res);
+            setLoading(false);
+            toast('Details updated !')
+        }, (error) => {
+            setLoading(false);
+        })
+
+    }
   return (
-    <div className="px-5 py-10 border-t-8 border-b-8 rounded-lg shadow border-zinc-900">
-      <div>
-        <div className="font-bold text-2xl">Experience</div>
-        <div className="font-light text-gray-500">Add experience for you job</div>
-      </div>
-      <form onSubmit={onSave} className="my-5">
-        <div className="flex justify-between items-end">
-            <label>Add Experience</label>
-            <Button className='border-red-600 text-red-600' variant='outline' size='sm'>Generate with AI</Button>
-        </div>
+    <div>
+        <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
+        <h2 className='font-bold text-lg'>Professional Experience</h2>
+        <p>Add Your previous Job experience</p>
         <div>
-        <Textarea defaultValue={resumeInfo?.summery} required className='mt-3' onChange={handleInputChange} />
+            {experinceList.map((item,index)=>(
+                <div key={index}>
+                    <div className='grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg'>
+                        <div>
+                            <label className='text-xs'>Position Title</label>
+                            <Input name="title" 
+                            onChange={(event)=>handleChange(index,event)}
+                            defaultValue={item?.title}
+                            />
+                        </div>
+                        <div>
+                            <label className='text-xs'>Company Name</label>
+                            <Input name="companyName" 
+                            onChange={(event)=>handleChange(index,event)}
+                            defaultValue={item?.companyName} />
+                        </div>
+                        <div>
+                            <label className='text-xs'>City</label>
+                            <Input name="city" 
+                            onChange={(event)=>handleChange(index,event)} 
+                            defaultValue={item?.city}/>
+                        </div>
+                        <div>
+                            <label className='text-xs'>State</label>
+                            <Input name="state" 
+                            onChange={(event)=>handleChange(index,event)}
+                            defaultValue={item?.state}
+                             />
+                        </div>
+                        <div>
+                            <label className='text-xs'>Start Date</label>
+                            <Input type="date"  
+                            name="startDate" 
+                            onChange={(event)=>handleChange(index,event)} 
+                            defaultValue={item?.startDate}/>
+                        </div>
+                        <div>
+                            <label className='text-xs'>End Date</label>
+                            <Input type="date" name="endDate" 
+                            onChange={(event)=>handleChange(index,event)} 
+                            defaultValue={item?.endDate}
+                            />
+                        </div>
+                        <div className='col-span-2'>
+                           {/* Work Summery  */}
+                           <RichTextEditor
+                           index={index}
+                           defaultValue={item?.workSummery}
+                           onRichTextEditorChange={(event)=>handleRichTextEditor(event,'workSummery',index)}  />
+                        </div>
+                    </div>
+                </div>
+            ))}
         </div>
-      </form>
-      <div className="flex justify-end">
-        <Button disabled={loading} type='submit'>{loading ? <Loader2 className="animate-spin"/> : 'Save'}</Button>
+        <div className='flex justify-between'>
+            <div className='flex gap-2'>
+            <Button variant="outline" onClick={AddNewExperience} className="text-primary"> + Add More Experience</Button>
+            <Button variant="outline" onClick={RemoveExperience} className="text-primary"> - Remove</Button>
+
+            </div>
+            <Button disabled={loading} onClick={()=>onSave()}>
+            {loading?<LoaderCircle className='animate-spin' />:'Save'}    
+            </Button>
+        </div>
         </div>
     </div>
   )
