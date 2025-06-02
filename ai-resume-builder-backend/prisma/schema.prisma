@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -15,16 +14,73 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  firstName String 
-  lastName String
-  email String
-  password String
-  resumes Resume[]
+  id              String @id @default(uuid())
+  firstName       String 
+  lastName        String
+  email           String @unique
+  password        String
+  resumes         Resume[]
 }
 
 model Resume {
-  id Int @id @default(autoincrement())
-  owner User @relation(fields: [owner_id], references: [id])
-  owner_id String
+  id              Int @id @default(autoincrement())
+  title           String
+  owner           User @relation(fields: [owner_id], references: [id])
+  owner_id        String
+  personalDetails PersonalDetail[]
+  summary         Summary[]
+  experience      Experience[]
+  education       Education[]
+  skill           Skill[]
+}
+
+model PersonalDetail {
+  id              Int @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  jobTitle        String
+  address         String
+  phone           String
+  email           String
+  resume          Resume @relation(fields: [resume_id], references: [id])
+  resume_id       Int 
+}
+
+model Summary {
+  id              Int @id @default(autoincrement())
+  summary         String
+  resume          Resume @relation(fields: [resume_id], references: [id])
+  resume_id       Int 
+}
+
+model Experience {
+  id              Int @id @default(autoincrement())
+  postitonTitle   String
+  companyName     String
+  city            String
+  state           String
+  startDate       String
+  endDate         String
+  summary         String
+  resume          Resume @relation(fields: [resume_id], references: [id])
+  resume_id       Int 
+}
+
+model Education {
+  id              Int @id @default(autoincrement())
+  universityName  String
+  degree          String
+  major           String
+  startDate       String
+  endDate         String
+  summary         String
+  resume          Resume @relation(fields: [resume_id], references: [id])
+  resume_id       Int 
+}
+
+model Skill {
+  id              Int @id @default(autoincrement())
+  name            String
+  resume          Resume @relation(fields: [resume_id], references: [id])
+  resume_id       Int 
 }
