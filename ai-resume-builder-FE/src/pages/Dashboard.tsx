@@ -2,13 +2,6 @@ import AddResumeCard from "../components/resume/AddResumeCard";
 import ResumeCard from "../components/resume/ResumeCard";
 
 export default function Dashboard() {
-    const titles = [{
-        title: 'Full Stack Developer'
-    }, {
-        title: 'Frontend Developer'
-    }, {
-        title: 'Backend Developer'
-    }]
     return (
         <div className="">
             <div className="container m-auto py-10 flex flex-col gap-5">

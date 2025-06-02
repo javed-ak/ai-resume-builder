@@ -1,18 +1,20 @@
-import { Navigate, Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import Navbar from "./components/Navbar"
-import { useState } from "react"
+import { useEffect } from "react"
 
 function App() {
-  const [isSignedIn, setIsSignedIn] = useState(true);
+  const navigate = useNavigate();
 
-  if(!isSignedIn) {
-    console.log('You are not Signed In')
-    return <Navigate to={'/auth/signup'} />
-  }
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token) {
+      navigate('/auth/signup')
+    }
+  }, [])
+  
   return (
     <>
-      <Navbar isSignedIn={isSignedIn}/>
+      <Navbar />
       <Outlet />
     </>
   )

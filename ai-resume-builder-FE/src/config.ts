@@ -1,0 +1,1 @@
+export const BACKEND_URL = "https://ai-resume-builder-backend.javedakhtarj26.workers.dev"

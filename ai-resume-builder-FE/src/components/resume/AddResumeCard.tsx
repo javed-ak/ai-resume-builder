@@ -1,6 +1,6 @@
 import { FiPlusCircle } from "react-icons/fi";
 import { useState } from "react";
-import DialogComponent from "../DialogComponent";
+import DialogComponent from "../dashboardComponents/DialogComponent";
 
 export default function AddResumeCard() {
     const [isOpen, setIsOpen] = useState(false)

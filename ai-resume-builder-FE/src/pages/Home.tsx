@@ -5,7 +5,7 @@ import HowItWork from '../components/homeComponents/HowItWork'
 function Home() {
     return (
         <div>
-            <Navbar isSignedIn={true} />
+            <Navbar />
             <HeroSection />
             <HowItWork />
         </div>

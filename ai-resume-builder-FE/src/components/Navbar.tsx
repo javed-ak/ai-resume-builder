@@ -1,8 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
 import Button from "./Button";
+import { useEffect, useState } from "react";
 
-export default function Navbar({ isSignedIn }: { isSignedIn: boolean }) {
+export default function Navbar() {
+    const [isSignedIn, setIsSignedIn] = useState(false)
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if(token) {setIsSignedIn(true)}
+    }, [])
+    
     const navigate = useNavigate();
     return (
         <div className="shadow">
@@ -21,7 +28,7 @@ export default function Navbar({ isSignedIn }: { isSignedIn: boolean }) {
                         </div>
                     ) : (
                         <Button label="Get Start" onClick={() => navigate('/auth/signup')} variant="Nutral" />
-                    )}
+                    )} 
                 </div>
             </div>
         </div>
